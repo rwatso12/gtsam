@@ -28,11 +28,11 @@ public:
   typedef boost::shared_ptr<Pseudorange> shared_ptr;
 
   Pseudorange(Key j, Vector meas, Matrix sat, Vector x, const SharedNoiseModel& model):
-    NoiseModelFactor1<Vector>(model, j), stateEst(x), satXYZ(sat), rho(meas) {}
+    NoiseModelFactor3<Vector>(model, j), stateEst(x), satXYZ(sat), rho(meas) {}
 
   virtual ~Pseudorange() {}
 
-  Vector evaluateError(const Vector x, boost::optional<Matrix&> H = boost::none) const
+  Vector evaluateError(const Vector& x, boost::optional<Matrix&> H = boost::none) const
   {
     obsMap = ones(4,4);
     Vector nom = x(0:2,0);
@@ -50,7 +50,7 @@ public:
   }
   virtual gtsam::NonlinearFactor::shared_ptr clone() const {
     return boost::static_pointer_cast<gtsam::NonlinearFactor>(
-        gtsam::NonlinearFactor::shared_ptr(new UnaryFactor(*this))); }
+        gtsam::NonlinearFactor::shared_ptr(new Pseudorange(*this))); }
 }; // Pseudoragne Factor
 
 int main(int argc, char** argv) {
