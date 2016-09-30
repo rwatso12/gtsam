@@ -10,6 +10,7 @@
 #include <gtsam/navigation/NavState.h> 
 #include <gtsam/geometry/Point3.h>  // for 3d points 
 #include <gtsam/base/LieScalar.h>  // for vectors
+#include <math.h> // for atan2
 
 namespace gtsam {
 
@@ -40,7 +41,10 @@ public:
 
 	vector evaluateError() {
 	
-		double bias = trop + 
+		Point3 diff = satXYZ_ - staesPre_(1:3) 
+		Point3 unitVect = diff/diff.norm()
+		double el = atan2(diff.z,diff.norm())
+		double tropMap = 1.0001 / ( 0.002001 + sin (el) * sin (el) )
 		Point3 hx = sumSquares + bias;
 		return (hx-measured_).vector();
 	}
